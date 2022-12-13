@@ -1,0 +1,15 @@
+# 客户端
+/Client/build
+/Client/temp
+/Client/library
+/Client/packages-hot-update
+/Client/local/local.json
+/Client/local/layout.editor.json
+/Client/local/node-tree-state.json
+
+# 服务端
+/development/WebServer/public/hot-update/remote-assets/
+
+# 通用文件
+.DS_STORE
+.syncthing.*

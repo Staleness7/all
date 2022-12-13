@@ -1,0 +1,18 @@
+# 客户端
+/build
+/temp
+/library
+/packages-hot-update
+/local
+
+# 通用文件
+.DS_STORE
+.syncthing.*
+
+# 游戏代码
+/assets/Script/Game/PaoDeKuai
+/assets/Script/Game/Majiang
+/assets/Script/Game/Niuniu
+/assets/Script/Game/Sangong
+/assets/Script/Game/Dougongniu
+/assets/Script/Game/Sanzhang

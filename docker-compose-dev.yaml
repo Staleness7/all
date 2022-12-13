@@ -1,0 +1,99 @@
+version: '3'
+
+networks:
+  network:
+    ipam:
+      driver: default
+      config:
+        - subnet: '172.18.189.0/16'
+volumes:
+  db:
+  redis:
+
+services:
+  server:
+    build: ./development/Server
+    container_name: game_server
+    hostname: game_server
+    restart: always
+    volumes:
+      - ./development/Server:/app
+      - /docker/code-server:/root
+      - ./development/code_config.yaml:/root/.config/code-server/config.yaml:ro # 只读模式,防止生成文件夹
+    # stdin_open: true
+    # tty: true
+    # command: /bin/bash
+    #    ports:
+    #      - "13000:13000"
+    #      - "12000:12000"
+    networks:
+      network:
+        ipv4_address: 172.18.189.11
+  web:
+    build: ./development/WebServer
+    container_name: game_web
+    hostname: game_web
+    restart: always
+    # stdin_open: true
+    # tty: true
+    # command: /bin/bash
+    volumes:
+      #      - .:/app
+      - ./development/WebServer:/app
+    #    ports:
+    #      - "80:80"
+    networks:
+      network:
+        ipv4_address: 172.18.189.12
+#  tunnel_db:
+#    image: cloudflare/cloudflared:latest
+#    container_name: game_db
+#    hostname: game_db
+#    restart: always
+#    command: access tcp --hostname mongo.example.com --url 0.0.0.0:27017
+#    networks:
+#      network:
+#        ipv4_address: 172.18.189.13
+  db:
+    image: mongo:3.4.3
+    container_name: game_db
+    hostname: game_db
+    restart: always
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: mongoUser
+      MONGO_INITDB_ROOT_PASSWORD: mongoPass
+    command: mongod --auth
+    ports:
+      - "27017:27017"
+    volumes:
+      - db:/data/db
+    networks:
+      network:
+        ipv4_address: 172.18.189.13
+    # mongo --port 27017 -u "mongoUser" -p "mongoPass" --authenticationDatabase "admin"
+    # use game
+    # db.createCollection("admins")
+    # db.admins.insert({uid: 1, account: "admin", password: "Admin123456", nickname:"超级管理员",permission:-1, createTime: 0});
+
+
+  redis:
+    image: redis
+    container_name: game_redis
+    hostname: game_redis
+    restart: always
+    command: redis-server --save 20 1 --loglevel warning --requirepass redisPass
+    volumes:
+      - redis:/data
+    networks:
+      network:
+        ipv4_address: 172.18.189.14
+
+  tunnel:
+    image: cloudflare/cloudflared:latest
+    container_name: game_tunnel
+    hostname: game_tunnel
+    restart: always
+    command: tunnel --no-autoupdate run --token [Cloudflare tunnel token]
+    networks:
+      network:
+        ipv4_address: 172.18.189.15
