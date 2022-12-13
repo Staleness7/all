@@ -41,6 +41,8 @@ docker-compose restart
 
 ### 配置
 
+>  关于服务器IP，请仔细阅读 docker-compose.yaml / docker-compose-dev.yaml
+
 #### 服务端配置：
 
 ```json
